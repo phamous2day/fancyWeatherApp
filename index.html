@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Our fancy Google Maps</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIj3uuUfxis9aBu1IF4LvbAm03qd6pCVo"></script>
+  <script src = "angular.js"> </script>
+  <script src = "weathermap.js"> </script>
+  </head>
+
+  <body ng-app = "myModule" ng-controller="myController">
+  {{message}}{{cityIds}}
+    <div id= "map"></div>
+    <div id= "sidebar" ng-controller= "sidebarController"></div>
+  </body>
+</html>
