@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Our fancy Google Maps</title>
+<head>
+  <meta charset="utf-8">
+  <title>Our fancy Google Maps</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIj3uuUfxis9aBu1IF4LvbAm03qd6pCVo"></script>
   <script src = "angular.js"> </script>
   <script src = "weathermap.js"> </script>
-  </head>
+</head>
 
-  <body ng-app = "myModule" ng-controller="myController">
-  {{message}}{{cityIds}}
-    <div id= "map"></div>
-    <div id= "sidebar" ng-controller= "sidebarController"></div>
-  </body>
+<body ng-app = "myModule" ng-controller="myController">
+  <div id= "map"></div>
+  <div id= "sidebar" ng-repeat = "result in results" ng-click = "openInfoWindow(result)">
+    {{result.name}}{{result.main.temp}}
+    <img ng-src="http://openweathermap.org/img/w/{{result.weather[0].icon}}.png">
+  </div>
+</body>
 </html>

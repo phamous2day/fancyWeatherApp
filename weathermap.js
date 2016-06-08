@@ -17,59 +17,64 @@ var cityIds = [
   5746545,
   4699066,
   5419384,
-  4990729,
-  5856195
+  4990729
 ];
-//
-// var newArray = cityIds.map(function (element){
-//   return element;
-// });
-//
-// var cityArray = newArray.join("\n");
-// console.log(cityArray);
 
-var API_KEY = 'eac2948bfca65b78a8c5564ecf91d00e';
-var myApp = angular.module("myModule", []);
+var myApp = angular.module('myModule', []);
+var markerDictionary = {};
+myApp.controller('myController', function($scope, $http) {
+  var mapElement = document.getElementById('map');
+  var map = new google.maps.Map(mapElement, {
+    center: { lat: 39.099727, lng: -94.578567 },
+    zoom: 3
+  });
+  var infoWindow = new google.maps.InfoWindow();
 
-myApp.controller('myController', function($scope, $http){
-  var mapDiv= document.getElementById("map");
-  var map= new google.maps.Map(mapDiv, {
-    center: {
-      lat: 33.748995, lng: -84.387982},
-      zoom: 5
-    });
+
+  $scope.openInfoWindow = function(result) {
+    var html = '<h3>' + result.name + '</h3>' +
+    '<p>' +
+      'Weather: ' + result.weather[0].description + '<br>' +
+      'Temperature: ' + result.main.temp + '°' +
+    '</p>';
+    infoWindow.setContent(html);
+    var marker = markerDictionary[result.id];
+    infoWindow.open(map, marker);
+  };
+
   $http({
     url: 'http://api.openweathermap.org/data/2.5/group',
     params: {
-      units:"imperial",
-      id: cityIds.join(","),
-      APPID: API_KEY
+      id: cityIds.join(','),
+      units: 'imperial',
+      APPID: 'eac2948bfca65b78a8c5564ecf91d00e'
     }
-  })
-  .success(function(data) {
-    console.log(data);
+  }).success(function(data) {
     var results = data.list;
-    for (var i = 0; i < results.length; i++) {
-      var result = results[i];
+    $scope.results = results;
+    var markers = results.map(function(result) {
       var position = {
         lat: result.coord.lat,
         lng: result.coord.lon
       };
-      var image = "http://openweathermap.org/img/w/" + result.weather[0].icon+ ".png";
+      var icon = {
+        url: 'http://openweathermap.org/img/w/' + result.weather[0].icon + '.png',
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(25, 25)
+      };
       var marker = new google.maps.Marker({
+        anchorPoint: new google.maps.Point(0, -8),
         position: position,
         title: result.name,
         map: map,
-        icon: {
-          url: image,
-          size: new google.maps.Size(50, 50),
-          origin: new google.maps.Point(0, 0),
-          anchor: new google.maps.Point(25, 25)
-        }
+        icon: icon
       });
-      marker.append(url);
-    }
+      markerDictionary[result.id] = marker;
+      marker.addListener('click', function() {
+        $scope.openInfoWindow(result);
+      });
+      return marker;
+    });
   });
-// myApp.controller('sidebarController', function($scope, $http) {
-//
-// });
+});
